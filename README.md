@@ -31,5 +31,18 @@ PROMPT_COMMAND='echo -n -e "\033]0;`pwd`\007"; PS1="`python ~/.bash/parrt-prompt
 You might want to update the bash that sits on OS X by default:
 
 ```
-$ brew upgrade bash
+$ bash --version
+GNU bash, version 3.2.51(1)-release (x86_64-apple-darwin13)
+Copyright (C) 2007 Free Software Foundation, Inc.
+$ brew install bash
+...
+$ bash # launch new shell in this window or open new tab/window.
+$ bash --version
+GNU bash, version 4.3.18(1)-release (x86_64-apple-darwin13.3.0)
+Copyright (C) 2013 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+This is free software; you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+$
 ```
