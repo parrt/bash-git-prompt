@@ -17,7 +17,7 @@ You can put file [`parrt-prompt.py`](https://github.com/parrt/bash-git-prompt/bl
 Add the following incantation to your `.bash_profile` or `.bashrc`, if you are using that file.
 
 ```
-PROMPT_COMMAND='echo -n -e "\033]0;`pwd`\007"; PS1="`~/.bash/parrt-prompt.py`"'
+PROMPT_COMMAND='PS1="`~/.bash/parrt-prompt.py`"'
 ```
 
 If you want to get fancy, the following variation will also set the title of the window (on OS X at least) to the current working directory.
