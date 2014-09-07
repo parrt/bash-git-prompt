@@ -12,7 +12,11 @@ It shows the branch you are on and whether it is clean (no staged or modified fi
 
 # Install
 
-You can put file [`parrt-prompt.py`](https://github.com/parrt/bash-git-prompt/blob/master/parrt-prompt.py) anywhere but that incantation below assumes it's in the `~/.bash` directory.
+You can put file [`parrt-prompt.py`](https://github.com/parrt/bash-git-prompt/blob/master/parrt-prompt.py) anywhere but that incantation below assumes it's in the `~/.bash` directory. Make sure it's executable:
+
+```
+$ chmod +x ~/.bash/parrt-prompt.py
+```
 
 Add the following incantation to your `.bash_profile` or `.bashrc`, if you are using that file.
 
