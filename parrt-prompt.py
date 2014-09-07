@@ -32,9 +32,7 @@ modified_files = [line for line in res.split('\n') if len(line)>0]
 res = run(['git','diff','--staged', '--name-status'])
 staged_files = [line for line in res.split('\n') if len(line)>0]
 
-dirty = False
-if len(modified_files)>0 or len(staged_files):
-	dirty = True
+dirty = len(modified_files)>0 or len(staged_files)
 
 if dirty:
 	print Host+":"+PathShort+" "+Yellow+branch+Reset+" \$ "
