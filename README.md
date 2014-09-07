@@ -12,22 +12,18 @@ It shows the branch you are on and whether it is clean (no staged or modified fi
 
 # Install
 
-You can put file [`parrt-prompt.py`](https://github.com/parrt/bash-git-prompt/blob/master/parrt-prompt.py) anywhere but that incantation below assumes it's in the `~/.bash` directory. Make sure it's executable:
-
-```
-$ chmod +x ~/.bash/parrt-prompt.py
-```
+You can put file [`parrt-prompt.py`](https://github.com/parrt/bash-git-prompt/blob/master/parrt-prompt.py) anywhere but that incantation below assumes it's in the `~/.bash` directory. 
 
 Add the following incantation to your `.bash_profile` or `.bashrc`, if you are using that file.
 
 ```
-PROMPT_COMMAND='PS1="`~/.bash/parrt-prompt.py`"'
+PROMPT_COMMAND='PS1="`python ~/.bash/parrt-prompt.py`"'
 ```
 
 If you want to get fancy, the following variation will also set the title of the window (on OS X at least) to the current working directory.
 
 ```
-PROMPT_COMMAND='echo -n -e "\033]0;`pwd`\007"; PS1="`~/.bash/parrt-prompt.py`"'
+PROMPT_COMMAND='echo -n -e "\033]0;`pwd`\007"; PS1="`python ~/.bash/parrt-prompt.py`"'
 ```
 
 # Misc
