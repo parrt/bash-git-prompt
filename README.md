@@ -8,7 +8,9 @@ from [magicmonty/bash-git-prompt](https://github.com/magicmonty/bash-git-prompt/
 
 ![parrt prompt](parrt-bash-git-snapshot.png)
 
-It shows the branch you are on and whether it is clean (no staged or modified files) or not with a green check mark or yellow branch name.
+It shows the branch you are on and whether it is clean (no staged or modified files) or not with a green or yellow branch name.
+
+It shows upward arrow if you are ahead and downward arrow if you are behind or both.
 
 # Install
 
