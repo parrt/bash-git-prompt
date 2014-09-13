@@ -3,8 +3,8 @@ bash-git-prompt
 
 # What/Why?
 
-My own variation on the bash git prompt. I took most of the functionality
-from [magicmonty/bash-git-prompt](https://github.com/magicmonty/bash-git-prompt/blob/master/gitstatus.py). I wanted something simpler in functionality and implementation. It looks like this:
+My own variation on the bash git prompt. I took much of the functionality
+from [magicmonty/bash-git-prompt](https://github.com/magicmonty/bash-git-prompt/blob/master/gitstatus.py). I wanted something simpler in functionality and implementation. Created some functions to organize. It looks like this:
 
 ![parrt prompt](parrt-bash-git-snapshot.png)
 
@@ -48,3 +48,5 @@ This is free software; you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 $
 ```
+
+
