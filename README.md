@@ -3,14 +3,14 @@ bash-git-prompt
 
 # What/Why?
 
-My own variation on the bash git prompt. I took much of the functionality
+My own variation on the bash git prompt. I took much of the ideas
 from [magicmonty/bash-git-prompt](https://github.com/magicmonty/bash-git-prompt/blob/master/gitstatus.py). I wanted something simpler in functionality and implementation. Created some functions to organize. It looks like this:
 
 ![parrt prompt](parrt-bash-git-snapshot.png)
 
 It shows the branch you are on and whether it is clean (no staged or modified files) or not with a green or yellow branch name.
 
-It shows upward arrow if you are ahead and downward arrow if you are behind or both.
+It shows upward arrow if you are ahead and downward arrow if you are behind or both. Took me forever to figure out that you need to `git fetch` before computing "behind" works. :(  Now correctly handles a fetch of remote for each repo every 30 minutes. Stores a small file in repo root: `.fetch_time_cache`.
 
 # Install
 
