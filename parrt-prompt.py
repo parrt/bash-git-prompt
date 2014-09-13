@@ -45,62 +45,47 @@ def run(cmd,fail=Host+":"+PathShort+" \$ "):
 		sys.exit(0)
 	return res.decode('utf-8')
 
-branch = run(['git', 'symbolic-ref', 'HEAD'])
-branch = branch.strip()[11:]
+def branch():
+	branch = run(['git', 'symbolic-ref', 'HEAD'])
+	return branch.strip()[11:]
 
-res = run(['git','diff','--name-status'])
-modified_files = [line for line in res.split('\n') if len(line)>0]
-res = run(['git','diff','--staged', '--name-status'])
-staged_files = [line for line in res.split('\n') if len(line)>0]
+def modified_files():
+	res = run(['git','diff','--name-status'])
+	return [line for line in res.split('\n') if len(line)>0]
 
-"""
-See http://stackoverflow.com/questions/2969214/git-programmatically-know-by-how-much-the-branch-is-ahead-behind-a-remote-branc
-## master
-If you are ahead:
+def staged_files():
+	res = run(['git','diff','--staged', '--name-status'])
+	return [line for line in res.split('\n') if len(line)>0]
 
-## master...origin/master [ahead 1]
-If you are behind:
+def ahead():
+	# git rev-list origin/master..HEAD
+	res = run(['git','rev-list','origin/'+branch()+'..HEAD'])
+	if len(res)>0:
+		lines = [line for line in res.split('\n') if len(line)>0]
+		return lines[0].decode('utf-8')
+	return None
 
-## master...origin/master [behind 58]
-And for both:
-
-## master...origin/master [ahead 1, behind 58]
-"""
-ahead = None
-behind = None
-res = run(['git','status','--porcelain', '--branch', '-uno'])
-lines = [line for line in res.split('\n') if len(line)>0]
-outofsync = lines[0].decode('utf-8')
-behind_regex = re.compile(".*behind ([0-9]+).*")
-r = behind_regex.search(outofsync)
-if r:
-	behind = r.group(1)
-ahead_regex = re.compile(".*ahead ([0-9]+).*")
-r = ahead_regex.search(outofsync)
-if r:
-	ahead = r.group(1)
+def behind():
+	# git rev-list HEAD..origin/master
+	res = run(['git','rev-list','HEAD..origin/'+branch()])
+	if len(res)>0:
+		lines = [line for line in res.split('\n') if len(line)>0]
+		return lines[0].decode('utf-8')
+	return None
 
 sync_status = ""
-if behind:
+if behind():
 	sync_status += Down
-if ahead:
+if ahead():
 	sync_status += Up
 if len(sync_status)>0:
 	sync_status = Red+sync_status+Reset
 
-# if behind and ahead:
-# 	sync_status = UpDown
-
-#print ahead, behind
-
-#remote_name = Popen(['git','config','branch.%s.remote' % branch], stdout=PIPE).communicate()[0].strip()
-#print "remote", remote_name
-
 dirty = False
-if len(modified_files)>0 or len(staged_files):
+if len(modified_files())>0 or len(staged_files()):
 	dirty = True
 
 if dirty:
-	print Host+":"+Yellow+branch+Reset+sync_status+":"+PathShort+" \$ "
+	print Host+":"+Yellow+branch()+Reset+sync_status+":"+PathShort+" \$ "
 else:
-	print Host+":"+Green+branch+Reset+sync_status+":"+PathShort+" \$ "
+	print Host+":"+Green+branch()+Reset+sync_status+":"+PathShort+" \$ "
