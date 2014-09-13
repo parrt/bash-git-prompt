@@ -5,6 +5,7 @@ from subprocess import Popen, PIPE
 import os
 import sys
 import re
+import time
 
 Blue=r'\[\e[01;34m\]'
 White=r'\[\e[01;37m\]'
@@ -65,13 +66,55 @@ def ahead():
 		return lines[0].decode('utf-8')
 	return None
 
+# only fetch every 10 requests for behind() for speed reasons
+def behind_cache_init():
+	f = open('.behind_cache', 'w')
+	f.write("1 0")
+	cache = "1 0"
+	f.close()
+	return cache
+
+
+def behind_cache_read():
+	if not os.path.exists('.behind_cache'):
+		cache = behind_cache_init()
+	else:
+		f = open('.behind_cache', 'r')
+		cache = f.read()
+		f.close()
+	count,dirty = cache.split(' ')
+	count = int(count)
+	dirty = int(dirty)
+	return (count,dirty)
+
+
+def behind_cache_write(count, dirty):
+	f = open('.behind_cache', 'w')
+	f.write("%d %s" % (count, dirty))
+	f.close()
+
+
 def behind():
+	count,dirty = behind_cache_read()
+	if not count % 15==0:
+		count += 1
+		behind_cache_write(count, dirty)
+		return dirty
+	count = 1
+
+	# git fetch IS REQUIRED. ugh
 	# git rev-list HEAD..origin/master
+	run(['git','fetch','origin', branch()])
 	res = run(['git','rev-list','HEAD..origin/'+branch()])
+	dirty = 0
 	if len(res)>0:
 		lines = [line for line in res.split('\n') if len(line)>0]
-		return lines[0].decode('utf-8')
-	return None
+		files = lines[0].decode('utf-8')
+		if len(files)>0:
+			dirty = 1
+
+	behind_cache_write(count, dirty)
+	return dirty
 
 sync_status = ""
 if behind():
