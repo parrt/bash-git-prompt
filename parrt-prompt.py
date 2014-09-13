@@ -7,6 +7,8 @@ import sys
 import re
 import time
 
+FETCH_REFRESH_INTERVAL_IN_SEC = 30*60 # 30 minutes
+
 Blue=r'\[\e[01;34m\]'
 White=r'\[\e[01;37m\]'
 Red=r'\[\e[01;31m\]'
@@ -16,6 +18,7 @@ Reset=r'\[\e[00m\]'
 FancyX=r'\342\234\227'
 Checkmark=r'\342\234\223'
 PathShort="\w"
+Host="\h"
 
 def u2d(s):
 	s = s.encode("utf-8")
@@ -25,18 +28,17 @@ def u2d(s):
 		ss += "\\"+str(v[1:])
 	return ss
 
-# '\xe2\x86\x91'
-#print ''.join(["\\"+oct(ord(c)) for c in Up])
-#'\xe2\x86\x93'
-#print ''.join(["\\"+oct(ord(c)) for c in Down])
-#Up=r'\342\206\221'
-Up = u2d(u"\u2191")
-Down=u2d(u"\u2186")
 Up = u2d(u"\u2912")
 Down=u2d(u"\u2913")
 UpDown=u2d(u"\u296F")
-#UpDown=u2d(u"\u21C5")
-Host="\h"
+
+def repo_root():
+	# fatal: Not a git repository (or any of the parent directories): .git
+	res = run(['git','rev-parse','--show-toplevel'])
+	lines = [line for line in res.split('\n') if len(line)>0]
+	if 'fatal' in lines[0]:
+		return None
+	return lines[0]
 
 def run(cmd,fail=Host+":"+PathShort+" \$ "):
 	res, err = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
@@ -66,45 +68,26 @@ def ahead():
 		return lines[0].decode('utf-8')
 	return None
 
-# only fetch every 10 requests for behind() for speed reasons
-def behind_cache_init():
-	f = open('.behind_cache', 'w')
-	f.write("1 0")
-	cache = "1 0"
+def fetch_time_cache_file():
+	return repo_root()+'/.fetch_time_cache'
+
+def fetch_time_cache_read():
+	if not os.path.exists(fetch_time_cache_file()):
+		fetch_time_cache_write()
+	f = open(fetch_time_cache_file(), 'r')
+	cache = f.read()
 	f.close()
-	return cache
+	prevtime = int(cache)
+	return prevtime
 
-
-def behind_cache_read():
-	if not os.path.exists('.behind_cache'):
-		cache = behind_cache_init()
-	else:
-		f = open('.behind_cache', 'r')
-		cache = f.read()
-		f.close()
-	count,dirty = cache.split(' ')
-	count = int(count)
-	dirty = int(dirty)
-	return (count,dirty)
-
-
-def behind_cache_write(count, dirty):
-	f = open('.behind_cache', 'w')
-	f.write("%d %s" % (count, dirty))
+def fetch_time_cache_write():
+	f = open(fetch_time_cache_file(), 'w')
+	cur = int(time.time())
+	f.write(str(cur))
 	f.close()
-
 
 def behind():
-	count,dirty = behind_cache_read()
-	if not count % 15==0:
-		count += 1
-		behind_cache_write(count, dirty)
-		return dirty
-	count = 1
-
-	# git fetch IS REQUIRED. ugh
 	# git rev-list HEAD..origin/master
-	run(['git','fetch','origin', branch()])
 	res = run(['git','rev-list','HEAD..origin/'+branch()])
 	dirty = 0
 	if len(res)>0:
@@ -112,9 +95,19 @@ def behind():
 		files = lines[0].decode('utf-8')
 		if len(files)>0:
 			dirty = 1
-
-	behind_cache_write(count, dirty)
 	return dirty
+
+# keep up to date with origin but only fetch every n seconds for speed reasons
+def fetch_remote():
+	prevtime = fetch_time_cache_read()
+	cur = int(time.time())
+	if (cur - prevtime) >= FETCH_REFRESH_INTERVAL_IN_SEC:
+		# git fetch IS REQUIRED for comparisons. ugh
+		run(['git', 'fetch', 'origin', branch()])
+		# reset counter to current time
+		fetch_time_cache_write()
+
+fetch_remote()
 
 sync_status = ""
 if behind():
