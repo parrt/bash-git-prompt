@@ -8,7 +8,6 @@ import re
 import time
 
 FETCH_REFRESH_INTERVAL_IN_SEC = 30*60 # 30 minutes
-FETCH_REFRESH_INTERVAL_IN_SEC = 10
 
 Blue=r'\[\e[01;34m\]'
 White=r'\[\e[01;37m\]'
