@@ -103,7 +103,6 @@ def behind():
 	n = 0
 	if len(res)>0:
 		lines = [line for line in res.split('\n') if len(line)>0]
-		print lines
 		n = len(lines)
 	return n
 
