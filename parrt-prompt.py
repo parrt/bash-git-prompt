@@ -103,10 +103,10 @@ def fetch_remote():
 	prevtime = fetch_time_cache_read()
 	cur = int(time.time())
 	if (cur - prevtime) >= FETCH_REFRESH_INTERVAL_IN_SEC:
-		# git fetch IS REQUIRED for comparisons. ugh
-		run(['git', 'fetch', 'origin', branch()])
 		# reset counter to current time
 		fetch_time_cache_write()
+		# git fetch IS REQUIRED for comparisons. ugh
+		run(['git', 'fetch', 'origin', branch()])
 
 fetch_remote()
 
